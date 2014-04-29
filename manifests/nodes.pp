@@ -15,6 +15,8 @@ node /^darwin\d+$/ {
   package { 'libzmq3': ensure => latest, }
   package { 'libarmadillo4': ensure => latest, }
   package { 'libprotobuf8': ensure => latest, }
+  package { 'libjpeg-turbo8': ensure => latest }
+  package { 'software-properties-common': ensure => latest }
 
   # Non-essential developer tools:
   class { 'vim':  username => $username, }
