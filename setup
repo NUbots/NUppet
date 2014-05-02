@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# New Robot Install
+
+apt-get update
+apt-get dist-upgrade -y
+apt-get install vim wireless-tools -y
+
+wpa_passphrase epsilon-xtreme 9181918191 > /etc/wpa_supplicant/wpa_supplicant.conf
+
+cat << EOF >> /etc/network/interfaces
+
+# WiFi
+auto wlan0
+iface wlan0 inet dhcp
+pre-up wpa_supplicant -B -Dwext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+post-up iwconfig wlan0 power off
+post-down killall -q wpa_supplicant
+EOF
+
+ifup wlan0
+
+cat << EOF > /etc/udev/rules.d/100-darwin.rules
+KERNEL=="ttyUSB0", MODE="0666"
+KERNEL=="video0", MODE="0666"
+EOF
+
+cat << EOF > /etc/rc.local
+#!/bin/sh -e
+
+# Set volume to 100%
+amixer sset Master 100%
+
+# Start PS3 bluetooth daemon
+screen -S ps3walk sixad --start
+
+exit 0
+EOF
