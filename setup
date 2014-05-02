@@ -8,7 +8,17 @@ apt-get install vim wireless-tools -y
 
 wpa_passphrase epsilon-xtreme 9181918191 > /etc/wpa_supplicant/wpa_supplicant.conf
 
-cat << EOF >> /etc/network/interfaces
+cat << EOF > /etc/network/interfaces
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# Loopback
+auto lo
+iface lo inet loopback
+
+# Ethernet
+auto eth0
+iface eth0 inet dhcp
 
 # WiFi
 auto wlan0
@@ -27,6 +37,17 @@ EOF
 
 cat << EOF > /etc/rc.local
 #!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
 
 # Set volume to 100%
 amixer sset Master 100%

@@ -1,5 +1,9 @@
+# This can be run with:
+# wget -qO- https://raw.githubusercontent.com/nubots/NUppet/develop/bootstrap | bash
+
 sudo apt-get install git puppet -y
 git clone https://github.com/nubots/NUppet.git
 cd NUppet
+sudo source setup
 sudo puppet apply manifests/site.pp --modulepath=modules/
 cd ..
