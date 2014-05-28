@@ -57,3 +57,9 @@ screen -S ps3walk sixad --start
 
 exit 0
 EOF
+
+# Add PS3 controller tools
+apt-get install software-properties-common -y
+apt-add-repository ppa:falk-t-j/qtsixa -y
+apt-get update
+apt-get install sixad -y

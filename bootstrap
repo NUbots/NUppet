@@ -4,6 +4,6 @@
 sudo apt-get install git puppet -y
 git clone https://github.com/nubots/NUppet.git
 cd NUppet
-sudo source setup
+sudo ./setup
 sudo puppet apply manifests/site.pp --modulepath=modules/
 cd ..
