@@ -14,6 +14,7 @@ node /^darwin\d+$/ {
   # essential dependencies
   package { 'libzmq3': ensure => latest, }
   package { 'libarmadillo4': ensure => latest, }
+  package { 'libtcmalloc-minimal4': ensure => latest, }
   package { 'libprotobuf8': ensure => latest, }
   package { 'libjpeg-turbo8': ensure => latest }
   package { 'software-properties-common': ensure => latest }
