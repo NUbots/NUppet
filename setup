@@ -53,12 +53,23 @@ cat << EOF > /etc/rc.local
 amixer sset Master 100%
 
 # Start PS3 bluetooth daemon
-screen -S ps3walk sixad --start
+su -l -c "screen -S ps3 bash -c 'sixad --start'" darwin
 
+# Disable CPU throttling
 update-rc.d ondemand disable
 
 exit 0
 EOF
+
+# Remove network delay by commenting out the delays
+sed -ri 's/(sleep (:?20|40|59))/#\1/' /etc/init/failsafe.conf
+
+# Added boot fail fix
+sed -i '/GRUB_CMDLINE_LINUX=""/a GRUB_RECORDFAIL_TIMEOUT=0' /etc/default/grub
+update-grub
+
+# Remove password requirement to use sudo
+sed -ri 's/(%sudo.*)(ALL)/\1NOPASSWD:\2/' /etc/sudoers
 
 # Add PS3 controller tools
 apt-get install software-properties-common -y
