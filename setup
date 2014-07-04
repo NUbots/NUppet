@@ -55,6 +55,8 @@ amixer sset Master 100%
 # Start PS3 bluetooth daemon
 screen -S ps3walk sixad --start
 
+update-rc.d ondemand disable
+
 exit 0
 EOF
 
