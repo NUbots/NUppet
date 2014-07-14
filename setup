@@ -4,7 +4,7 @@
 
 apt-get update
 apt-get dist-upgrade -y
-apt-get install vim wireless-tools -y
+apt-get install vim wireless-tools wpasupplicant -y
 
 wpa_passphrase epsilon-xtreme 9181918191 > /etc/wpa_supplicant/wpa_supplicant.conf
 
