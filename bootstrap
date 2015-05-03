@@ -1,6 +1,7 @@
 # This can be run with:
 # wget -qO bootstrap https://raw.githubusercontent.com/nubots/NUppet/develop/bootstrap; bash bootstrap
 
+sudo apt-get update
 sudo apt-get install git puppet -y
 git clone https://github.com/nubots/NUppet.git
 cd NUppet

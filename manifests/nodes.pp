@@ -18,6 +18,8 @@ node /^darwin\d+$/ {
   package { 'libprotobuf8': ensure => latest }
   package { 'libyaml-cpp0.5': ensure => latest }
   package { 'libjpeg-turbo8': ensure => latest }
+  package { 'libopenblas-base': ensure => latest }
+  package { 'libmuparser2': ensure => latest }
   package { 'software-properties-common': ensure => latest }
 
   # Non-essential developer tools:

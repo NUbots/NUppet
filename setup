@@ -3,10 +3,13 @@
 # New Robot Install
 
 apt-get update
+apt-get install software-properties-common -y
+add-apt-repository ppa:ubuntu-toolchain-r/test -y
+apt-get update
 apt-get dist-upgrade -y
 apt-get install vim wireless-tools wpasupplicant -y
 
-wpa_passphrase epsilon-xtreme 9181918191 > /etc/wpa_supplicant/wpa_supplicant.conf
+wpa_passphrase epsilon-x 9181918191 > /etc/wpa_supplicant/wpa_supplicant.conf
 
 cat << EOF > /etc/network/interfaces
 # This file describes the network interfaces available on your system
@@ -72,7 +75,6 @@ update-grub
 sed -ri 's/(%sudo.*)(ALL)/\1NOPASSWD:\2/' /etc/sudoers
 
 # Add PS3 controller tools
-apt-get install software-properties-common -y
 apt-add-repository ppa:falk-t-j/qtsixa -y
 apt-get update
 apt-get install sixad -y
