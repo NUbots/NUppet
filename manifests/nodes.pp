@@ -12,6 +12,8 @@ node /^darwin\d+$/ {
   $username = 'darwin'
 
   # essential dependencies
+  package { 'espeak': ensure => latest }
+  package { 'libboost-filesystem1.54.0': ensure => latest }
   package { 'libzmq3': ensure => latest }
   package { 'libarmadillo4': ensure => latest }
   package { 'libtcmalloc-minimal4': ensure => latest }
