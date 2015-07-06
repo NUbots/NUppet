@@ -36,6 +36,8 @@ ifup wlan0
 cat << EOF > /etc/udev/rules.d/100-darwin.rules
 KERNEL=="ttyUSB0", MODE="0666"
 KERNEL=="video0", MODE="0666"
+KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE="0666", SYMLINK+="CM730"
+KERNEL=="video*", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", MODE="0666", SYMLINK+="CAM"
 EOF
 
 cat << EOF > /etc/rc.local
