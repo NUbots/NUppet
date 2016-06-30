@@ -74,6 +74,50 @@ update-rc.d ondemand disable
 exit 0
 EOF
 
+# Install robocup.conf to /etc/init (when using upstart) to allow robocup to autostart
+if [ -d "/usr/share/upstart" ]; then
+    cat << EOF > /etc/init/robocup.conf
+    description "RoboCup auto-start unit"
+
+    start on (started networking)
+    stop on runlevel [!2345]
+
+    respawn
+
+    script
+      export HOME="/home/darwin/"
+      export LD_LIBRARY_PATH="/home/darwin/toolchain"
+      cd /home/darwin
+      ./robocup > $(date +%s)".log"
+    end script
+    EOF
+
+# Install robocup.service to /etc/systemd/system (when using systemd) to allow robocup to autostart
+else
+    cat << EOF > /etc/systemd/system/robocup.service
+    [Unit]
+    Description="RoboCup auto-start unit"
+    Wants=network.target
+    After=network.target
+    RequiresMountsFor=/home/darwin
+
+    [Service]
+    Type=simple
+    Restart=always
+    WorkingDirectory=/home/darwin
+    User=darwin
+    Environment=HOME="/home/darwin/" LD_LIBRARY_PATH="/home/darwin/toolchain"
+    PassEnvironment=HOME LD_LIBRARY_PATH
+    ExecStart=/home/darwin/robocup
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+    # Enable autostarting of the service
+    systemctl enable robocup.service
+fi
+
 # Remove network delay by commenting out the delays
 sed -ri 's/(sleep (:?20|40|59))/#\1/' /etc/init/failsafe.conf
 
