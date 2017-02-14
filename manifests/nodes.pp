@@ -14,7 +14,6 @@ node /^darwin\d+$/ {
   # essential dependencies
   package { 'ifenslave': ensure => latest }
   package { 'xboxdrv': ensure => latest }
-  package { 'libzmq3': ensure => latest }
   package { 'software-properties-common': ensure => latest }
 
   # Non-essential developer tools:
@@ -35,7 +34,6 @@ node /^igus\d+$/ {
   # essential dependencies
   package { 'ifenslave': ensure => latest }
   package { 'xboxdrv': ensure => latest }
-  package { 'libzmq3': ensure => latest }
   package { 'software-properties-common': ensure => latest }
 
   # Non-essential developer tools:
