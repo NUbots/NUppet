@@ -8,3 +8,4 @@ cd NUppet
 sudo bash setup
 sudo puppet apply manifests/site.pp --modulepath=modules/
 cd ..
+rm -rf NUppet
