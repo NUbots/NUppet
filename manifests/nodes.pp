@@ -5,23 +5,16 @@ class initial_apt_update {
   } -> Package <| |>
 }
 
-node /^darwin\d+$/ {
+node nubots {
   include initial_apt_update
 
   # # define variables for this node
-  $username = 'darwin'
+  $username = 'nubots'
 
   # essential dependencies
-  package { 'espeak': ensure => latest }
-  package { 'libboost-filesystem1.54.0': ensure => latest }
+  package { 'ifenslave': ensure => latest }
+  package { 'xboxdrv': ensure => latest }
   package { 'libzmq3': ensure => latest }
-  package { 'libarmadillo4': ensure => latest }
-  package { 'libtcmalloc-minimal4': ensure => latest }
-  package { 'libprotobuf8': ensure => latest }
-  package { 'libyaml-cpp0.5': ensure => latest }
-  package { 'libjpeg-turbo8': ensure => latest }
-  package { 'libopenblas-base': ensure => latest }
-  package { 'libmuparser2': ensure => latest }
   package { 'software-properties-common': ensure => latest }
 
   # Non-essential developer tools:

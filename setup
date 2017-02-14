@@ -9,8 +9,6 @@ apt-get update
 apt-get dist-upgrade -y
 apt-get install vim wireless-tools wpasupplicant -y
 
-wpa_passphrase epsilon-x 9181918191 > /etc/wpa_supplicant/wpa_supplicant.conf
-
 cat << EOF > /etc/network/interfaces
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
@@ -19,21 +17,33 @@ cat << EOF > /etc/network/interfaces
 auto lo
 iface lo inet loopback
 
-# Ethernet
-auto eth0
-iface eth0 inet dhcp
+# Wifi + Ethernet Bonding
+allow-hotplug wlp2s0
+iface wlp2s0 inet manual
+    wpa-ssid "epsilon-x"
+    wpa-psk 9181918191
+    wpa-bridge bond0
+    bond-master bond0
+    bond-mode active-backup
+    bond-miimon 1000
+    bond-give-a-chance 10
 
-# WiFi
-auto wlan0
-iface wlan0 inet dhcp
-pre-up wpa_supplicant -B -Dwext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
-post-up iwconfig wlan0 power off
-post-down killall -q wpa_supplicant
+allow-hotplug bond0
+iface bond0 inet static
+    address 10.1.1.11
+    netmask 255.255.0.0
+    gateway 10.1.3.1
+    dns-nameserver 10.1.3.1
+    bond-slaves wlp2s0 enp0s25
+    bond-mode active-backup
+    bond-primary enp0s25
+    bond-miimon 1000
+
 EOF
 
-ifup wlan0
+ifup bond0
 
-cat << EOF > /etc/udev/rules.d/100-darwin.rules
+cat << EOF > /etc/udev/rules.d/100-nubots.rules
 # Set permissions for ttyUSB0 (CM730) and video* (webcam) devices
 KERNEL=="ttyUSB*", MODE="0666"
 KERNEL=="video*", MODE="0666"
@@ -46,6 +56,10 @@ KERNEL=="video*", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", MODE="0666"
 
 # Symlink the Creative Labs LIVE! CAM Chat HD webcam to /dev/CAM
 KERNEL=="video*", ATTRS{idVendor}=="041e", ATTRS{idProduct}=="4097", MODE="0666", SYMLINK+="CAM"
+
+# Make sure the USB devices end up in the pgrimaging group.
+SUBSYSTEM=="usb", GROUP="pgrimaging"
+
 EOF
 
 cat << EOF > /etc/rc.local
@@ -65,58 +79,59 @@ cat << EOF > /etc/rc.local
 # Set volume to 100%
 amixer sset Master 100%
 
-# Start PS3 bluetooth daemon
-su -l -c "screen -S ps3 bash -c 'sixad --start'" darwin
-
 # Disable CPU throttling
 update-rc.d ondemand disable
 
 exit 0
 EOF
 
-# Install robocup.conf to /etc/init (when using upstart) to allow robocup to autostart
-if [ -d "/usr/share/upstart" ]; then
-    cat << EOF > /etc/init/robocup.conf
-    description "RoboCup auto-start unit"
-
-    start on (started networking)
-    stop on runlevel [!2345]
-
-    respawn
-
-    script
-      export HOME="/home/darwin/"
-      export LD_LIBRARY_PATH="/home/darwin/toolchain"
-      cd /home/darwin
-      ./robocup > $(date +%s)".log"
-    end script
-    EOF
-
 # Install robocup.service to /etc/systemd/system (when using systemd) to allow robocup to autostart
-else
-    cat << EOF > /etc/systemd/system/robocup.service
-    [Unit]
-    Description="RoboCup auto-start unit"
-    Wants=network.target
-    After=network.target
-    RequiresMountsFor=/home/darwin
+cat << EOF > /etc/systemd/system/robocup.service
+[Unit]
+Description="RoboCup auto-start unit"
+Wants=network.target
+After=network.target
+RequiresMountsFor=/home/nubots
 
-    [Service]
-    Type=simple
-    Restart=always
-    WorkingDirectory=/home/darwin
-    User=darwin
-    Environment=HOME="/home/darwin/" LD_LIBRARY_PATH="/home/darwin/toolchain"
-    PassEnvironment=HOME LD_LIBRARY_PATH
-    ExecStart=/home/darwin/robocup
+[Service]
+Type=simple
+Restart=always
+WorkingDirectory=/home/nubots
+User=nubots
+Environment=HOME="/home/nubots/" LD_LIBRARY_PATH="/home/nubots/toolchain"
+PassEnvironment=HOME LD_LIBRARY_PATH
+ExecStart=/home/nubots/robocup
 
-    [Install]
-    WantedBy=multi-user.target
-    EOF
+[Install]
+WantedBy=multi-user.target
+EOF
 
-    # Enable autostarting of the service
-    systemctl enable robocup.service
-fi
+# Taken from https://gist.github.com/akatch/cdb707856d467bd7cacd
+cat << EOF > /etc/systemd/system/xboxdrv.service
+# Systemd unit to enable xboxdrv driver for Xbox 360 controller
+# Usage:
+# save to /lib/systemd/system/xboxdrv.service
+# to start: sudo service xboxdrv start
+# to enable on boot: sudo systemctl enable xboxdrv
+
+[Unit]
+Description=Xbox controller driver daemon
+
+[Service]
+Type=forking
+User=root
+PIDFile=/var/run/xboxdrv.pid
+ExecStart=/usr/bin/xboxdrv --daemon --detach --pid-file /var/run/xboxdrv.pid --dbus disabled --silent --mimic-xpad
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable autostarting of the robocup service
+systemctl enable robocup.service
+
+# Enable autostarting of the xboxdrv service
+systemctl enable xboxdrv.service
 
 # Remove network delay by commenting out the delays
 sed -ri 's/(sleep (:?20|40|59))/#\1/' /etc/init/failsafe.conf
@@ -127,8 +142,3 @@ update-grub
 
 # Remove password requirement to use sudo
 sed -ri 's/(%sudo.*)(ALL)/\1NOPASSWD:\2/' /etc/sudoers
-
-# Add PS3 controller tools
-apt-add-repository ppa:falk-t-j/qtsixa -y
-apt-get update
-apt-get install sixad -y
