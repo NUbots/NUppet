@@ -136,6 +136,10 @@ systemctl enable xboxdrv.service
 # Remove network delay by commenting out the delays
 sed -ri 's/(sleep (:?20|40|59))/#\1/' /etc/init/failsafe.conf
 
+# Automatically remove old kernel versions
+dpkg-reconfigure unattended-upgrades
+sed -ri 's/\/\/Unattended-Upgrade::Remove-Unused-Dependencies\s"false";/Unattended-Upgrade::Remove-Unused-Dependencies "true";/' /etc/apt/apt.conf.d/50unattended-upgrades
+
 # Added boot fail fix
 sed -i '/GRUB_CMDLINE_LINUX=""/a GRUB_RECORDFAIL_TIMEOUT=0' /etc/default/grub
 update-grub
