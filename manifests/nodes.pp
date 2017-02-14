@@ -5,7 +5,28 @@ class initial_apt_update {
   } -> Package <| |>
 }
 
-node nubots {
+node /^darwin\d+$/ {
+  include initial_apt_update
+
+  # # define variables for this node
+  $username = 'nubots'
+
+  # essential dependencies
+  package { 'ifenslave': ensure => latest }
+  package { 'xboxdrv': ensure => latest }
+  package { 'libzmq3': ensure => latest }
+  package { 'software-properties-common': ensure => latest }
+
+  # Non-essential developer tools:
+  class { 'vim':  username => $username }
+  package { 'screen': ensure => latest }
+  package { 'htop': ensure => latest }
+  package { 'gdb': ensure => latest }
+  package { 'linux-headers-generic': ensure => latest }
+  package { 'dos2unix': ensure => latest }
+}
+
+node /^igus\d+$/ {
   include initial_apt_update
 
   # # define variables for this node
