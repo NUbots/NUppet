@@ -17,6 +17,12 @@ node /^darwin\d+$/ {
   package { 'xboxdrv': ensure => latest }
   package { 'software-properties-common': ensure => latest }
 
+  # Essential packages for point grey cameras.
+  package { 'libgomp1': ensure => latest }
+  package { 'libswscale-ffmpeg3': ensure => latest }
+  package { 'libavcodec-ffmpeg56': ensure => latest }
+  package { 'libavformat-ffmpeg56': ensure => latest }
+
   # Non-essential developer tools:
   class { 'vim':  username => $username }
   package { 'screen': ensure => latest }
@@ -37,6 +43,12 @@ node /^igus\d+$/ {
   package { 'ifenslave': ensure => latest }
   package { 'xboxdrv': ensure => latest }
   package { 'software-properties-common': ensure => latest }
+
+  # Essential packages for point grey cameras.
+  package { 'libgomp1': ensure => latest }
+  package { 'libswscale-ffmpeg3': ensure => latest }
+  package { 'libavcodec-ffmpeg56': ensure => latest }
+  package { 'libavformat-ffmpeg56': ensure => latest }
 
   # Non-essential developer tools:
   class { 'vim':  username => $username }
