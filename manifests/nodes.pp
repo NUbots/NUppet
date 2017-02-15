@@ -12,6 +12,7 @@ node /^darwin\d+$/ {
   $username = 'nubots'
 
   # essential dependencies
+  package { 'libgfortran3': ensure => latest }
   package { 'ifenslave': ensure => latest }
   package { 'xboxdrv': ensure => latest }
   package { 'software-properties-common': ensure => latest }
@@ -32,6 +33,7 @@ node /^igus\d+$/ {
   $username = 'nubots'
 
   # essential dependencies
+  package { 'libgfortran3': ensure => latest }
   package { 'ifenslave': ensure => latest }
   package { 'xboxdrv': ensure => latest }
   package { 'software-properties-common': ensure => latest }
